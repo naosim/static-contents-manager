@@ -1,0 +1,26 @@
+{
+  "site": {
+    "site_title": "なおしむ論",
+    "site_description": "its my life",
+    "site_link": "",
+    "site_author": "なおしむ"
+  },
+  "list": [
+    {
+      "title": "フガー",
+      "date": "2018-07-27 12:00:00",
+      "link": "/posts/2018/07/27_sample.json"
+    },
+    {
+      "title": "さんぷる",
+      "date": "2018-07-26 12:00:00",
+      "link": "/posts/2018/07/26_sample.json"
+    }
+  ],
+  "next_list": null,
+  "prev_list": null,
+  "current_page_index": 1,
+  "max_page_index": 1
+}
+
+

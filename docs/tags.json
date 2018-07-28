@@ -1,0 +1,29 @@
+{
+  "site": {
+    "site_title": "なおしむ論",
+    "site_description": "its my life",
+    "site_link": "",
+    "site_author": "なおしむ"
+  },
+  "tags": [
+    {
+      "name": "all",
+      "link": "list/all/all_1.json"
+    },
+    {
+      "name": "sample",
+      "link": "list/sample/sample_1.json"
+    },
+    {
+      "name": "hoge",
+      "link": "list/hoge/hoge_1.json"
+    },
+    {
+      "name": "foo",
+      "link": "list/foo/foo_1.json"
+    }
+  ]
+
+}
+
+

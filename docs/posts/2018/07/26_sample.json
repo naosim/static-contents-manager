@@ -1,0 +1,27 @@
+{
+  "site": {
+    "site_title": "なおしむ論",
+    "site_description": "its my life",
+    "site_link": "",
+    "site_author": "なおしむ"
+  },
+  "article": {
+    "title": "さんぷる",
+    "date": "2018-07-26 12:00:00",
+    "tags": ["sample", "hoge"],
+    "body": "ほげほげ"
+  },
+  "next": {
+    "all": "/posts/2018/07/27_sample.json",
+    "sample": "/posts/2018/07/27_sample.json",
+    "hoge": null
+  },
+  "prev": {
+    "all": null,
+    "sample": null,
+    "hoge": null
+  }
+
+}
+
+
