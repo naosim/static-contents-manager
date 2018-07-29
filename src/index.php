@@ -4,7 +4,8 @@ header("Content-type: text/plain; charset=utf-8");
 require_once("spyc.php");
 require_once("lib.php");
 require_once("site.php");
-require_once("article.php");
+require_once("article_domain.php");
+require_once("tag_infra.php");
 
 $config = spyc_load_file("../config.yaml");
 $siteYaml = spyc_load_file('../' . $config["input"] . '/site.yaml');
@@ -28,12 +29,29 @@ function fileList($path) {
   
 }
 
+function toKeyList($map) {
+  $list = [];
+  foreach($map as $key => $value) {
+    $list[] = $key;
+  }
+  return $list;
+}
+
+system("rm -rf ../tmp");
+system("mkdir ../tmp");
+
+$definedArticleTagList = getDefinedArticleTagList($config);
+
 $list = fileList('../' . $config["input"] . '/posts');
 $articleList = [];
+$tagSlangMap = [];
 foreach($list as $path) {
   $text = file_get_contents($path);
-  $articleList[] = ArticleSummary::createFromText($text);
+  $article = ArticleSummary::createFromText($text, $definedArticleTagList);
+  $tagSlangMap = $article->tagList->mergeSlang($tagSlangMap);
+  $articleList[] = $article;
 }
+$tagSlangList = toKeyList($tagSlangMap);
 /*
 function($a, $b) {
   // 日付の降順にならべる
@@ -41,32 +59,75 @@ function($a, $b) {
 }*/
 usort($articleList, function($a, $b) { return ArticleSummary::compareInv($a, $b); });
 
-foreach($articleList as $article) {
-  var_dump($article->hasTag(new ArticleTagName("sample")));
-}
+// foreach($articleList as $article) {
+//   var_dump($article->hasTag("sample"));
+// }
+var_dump($tagSlangList);
 
-function saveList($site, $list, $filepath) {
+function saveList($config, $site, $list, $tagName, $page) {
   $map = [];
   $map['site'] = $site->toMap();
   $map['list'] = $list;
-  var_dump($filepath);
+  $path = "../tmp/list/$tagName";
+  mkdir("../tmp/list");
+  mkdir("../tmp/list/$tagName");
+  $filename = "$page.json";
+  var_dump("$path/$filename");
   var_dump(json_encode($map, JSON_PRETTY_PRINT));
+  
+  file_put_contents("$path/$filename", json_encode($map, JSON_PRETTY_PRINT));
+}
+
+function saveTags($config, $site, $tagSlangList, $definedArticleTagList) {
+  $result = [];
+  $result['site'] = $site->toMap();
+  $result['tags'] = [];
+  foreach($tagSlangList as $tagName) {
+    $tag = null;
+    if($definedArticleTagList->hasTag($tagName)) {
+      $tag = $definedArticleTagList->getTag($tagName);
+    } else {
+      $tag = new ArticleTag(new ArticleTagSlang($tagName), new ArticleTagDisplayName($tagName));
+    }
+    $map = $tag->toMap();
+    $map['link'] = $site->link->value . "/list/$tagName/0.json";
+    $result['tags'][] = $map;
+  }
+  var_dump($result);
+  $path = '../tmp/tags.json';
+  var_dump($path);
+  file_put_contents($path, json_encode($result, JSON_PRETTY_PRINT));
+}
+
+function createList($config, $site, $articleList, $tagName) {
+  $list = [];
+  $page = 0;
+  foreach($articleList as $i => $article) {
+    $page = $site->numberOfArticleByPage->getPage($i);
+    if(!isset($list[$page])) {
+      $list[] = [];
+    }
+    $list[$page][] = $article->toMap();
+  }
+
+  foreach($list as $index => $articleList) {
+    saveList($config, $site, $articleList, $tagName, $index);
+  }
 }
 
 // allの作成
-$page = -1;
-$list = [];
-$map = [];
-foreach($articleList as $i => $article) {
-  if($page != $site->numberOfArticleByPage->getPage($i)) {// ページが変わった
-    var_dump("change");
-    if($page >= 0) {
-      // 保存
-      saveList($site, $list, 'list/all/' . $page . '.json');
+createList($config, $site, $articleList, 'all');
+
+// tag別
+foreach($tagSlangList as $tagName) {
+  $filteredArticleList = [];
+  foreach($articleList as $article) {
+    if($article->hasTag($tagName)) {
+      $filteredArticleList[] = $article;
     }
-    $page = $site->numberOfArticleByPage->getPage($i);
-    $list = [];
   }
-  $list[] = $article->toMap();
+
+  createList($config, $site, $filteredArticleList, $tagName);
 }
-saveList($site, $list, 'list/all/' . $page . '.json');
+
+saveTags($config, $site, $tagSlangList, $definedArticleTagList);
