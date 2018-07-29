@@ -15,19 +15,33 @@ class ArticleDate {
     }
   }
 }
+class ArticlePath {
+  public $value;
+  public $path;
+  function __construct(
+    SiteLink $siteLink,
+    string $path
+  ) {
+    $this->value = $siteLink->value . $path;
+    $this->path = $path;
+  }
+}
   
 class ArticleSummary {
   public $title;
   public $date;
   public $tagList;
+  public $path;
   function __construct(
     ArticleTitle $title,
     ArticleDate $date,
-    ArticleTagList $tagList
+    ArticleTagList $tagList,
+    ArticlePath $path
   ) {
     $this->title = $title;
     $this->date = $date;
     $this->tagList = $tagList;
+    $this->path = $path;
   }
 
   public function hasTag(string $tagName): bool {
@@ -39,10 +53,11 @@ class ArticleSummary {
     $map['title'] = $this->title->value;
     $map['date'] = $this->date->value;
     $map['tag_slang_list'] = $this->tagList->toSlangArray();
+    $map['link'] = $this->path->value;
     return $map;
   }
 
-  static function createFromText($text, DefinedArticleTagList $definedArticleTagList): ArticleSummary {
+  static function createFromText($text, DefinedArticleTagList $definedArticleTagList, ArticlePath $path): ArticleSummary {
     // var_dump($text);
     $first = strpos($text, '---');
     $second = strpos($text, '---', $first + 3);
@@ -65,7 +80,8 @@ class ArticleSummary {
     return new ArticleSummary(
       $title,
       $date,
-      $tagList
+      $tagList,
+      $path
     );
   }
 
@@ -76,4 +92,42 @@ class ArticleSummary {
   static function compareInv(ArticleSummary $a, $b): int {
     return -ArticleSummary::compare($a, $b);
   }
+}
+
+class ArticleBody extends StringVO {}
+
+class ArticleDetail {
+  public $title;
+  public $date;
+  public $tagList;
+  public $body;
+  function __construct(
+    ArticleSummary $summary,
+    ArticleBody $body
+  ) {
+    $this->title = $summary->title;
+    $this->date = $summary->date;
+    $this->tagList = $summary->tagList;
+    $this->body = $body;
+  }
+
+  public static function createFromText($text, DefinedArticleTagList $definedArticleTagList, ArticlePath $path): ArticleDetail {
+    $first = strpos($text, '---');
+    $second = strpos($text, '---', $first + 3);
+    $body = new ArticleBody(trim(substr($text, $second + 3)));
+    return new ArticleDetail(
+      ArticleSummary::createFromText($text, $definedArticleTagList, $path),
+      $body
+    );
+  }
+
+  function toMap() {
+    $map = [];
+    $map['title'] = $this->title->value;
+    $map['date'] = $this->date->value;
+    $map['tag_slang_list'] = $this->tagList->toArray();
+    $map['body'] = $this->body->value;
+    return $map;
+  }
+
 }

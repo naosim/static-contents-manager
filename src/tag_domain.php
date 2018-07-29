@@ -63,6 +63,14 @@ class ArticleTagList {
     }
     return $list;
   }
+
+  public function toArray(): array {
+    $list = [];
+    foreach($this->list as $tag) {
+      $list[] = $tag->toMap();
+    }
+    return $list;
+  }
 }
 
 class DefinedArticleTagList extends ArticleTagList {}
