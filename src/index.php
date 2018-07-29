@@ -43,12 +43,65 @@ class Site {
 }
 
 class ArticleTitle extends StringVO {}
-class ArticleDate extends StringVO {}
+class ArticleDate extends StringVO {
+  public $timestamp;
+  function __construct($value) {
+    $this->value = $value;
+    $this->strtotime($value);
+  }
+  function __get($name){
+    if($name == 'value') {
+      return $this->value;
+    }
+  }
+}
 class ArticleTagName extends StringVO {}
+class ArticleTagNameList {
+  public $list;
+  function __construct(array $list) {
+    $this->list = $list;
+  }
+}
 
 class ArticleSummary {
+  public $title;
+  public $date;
+  public $tagNameList;
+  function __construct(
+    ArticleTitle $title,
+    ArticleDate $date,
+    ArticleTagNameList $tagNameList
+  ) {
+    $this->title = $title;
+    $this->date = $date;
+    $this->tagNameList = $tagNameList;
+  }
 
+  static function createFromText($text): ArticleSummary {
+    // var_dump($text);
+    $first = strpos($text, '---');
+    $second = strpos($text, '---', $first + 3);
+    $r = trim(substr($text, 3, $second - 3));
+    $map = spyc_load($r);
+    $title = new ArticleTitle($map['title']);
+    $date = new ArticleDate($map['date']);
+    $list = [];
+    if(isset($map['tags'])) {
+      foreach($map['tags'] as $tag) {
+        $list[] = new ArticleTagName($tag);
+      }
+    }
+    $tagNameList = new ArticleTagNameList($list);
+    return new ArticleSummary(
+      $title,
+      $date,
+      $tagNameList
+    );
+  }
 }
+
+$text = file_get_contents('../inputdata/posts/2018/07/26_sample.md');
+var_dump(ArticleSummary::createFromText($text));
 
 $site = Site::createFromYamlMap($siteYaml);
 var_dump($site);
