@@ -1,4 +1,5 @@
 site_title: なおしむ論
 site_description: its my life
 site_link: "",
-site_author: なおしむ
+site_author: なおしむ,
+num_article_by_page: 2
