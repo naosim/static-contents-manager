@@ -68,13 +68,20 @@ usort($articleList, function($a, $b) { return ArticleSummary::compareInv($a, $b)
 // }
 var_dump($tagSlangList);
 
-function saveList($config, $site, $list, $tagName, $page) {
+function saveList($config, $site, $list, $tagName, $page, $maxPageIndex) {
   $map = [];
   $map['site'] = $site->toMap();
   $map['list'] = $list;
+  
   $path = "../tmp/list/$tagName";
   mkdirs($path);
   $filename = "$page.json";
+
+  $map['next_list'] = $page + 1 <= $maxPageIndex ? $site->link->value . "/list/$tagName/" . ($page + 1) . '.json' : null;
+  $map['prev_list'] = $page > 0 ? $site->link->value . "/list/$tagName/" . ($page - 1) . '.json' : null;
+  $map['current_page_index'] = $page;
+  $map['max_page_index'] = $maxPageIndex;
+
   var_dump("$path/$filename");
   var_dump(json_encode($map, JSON_PRETTY_PRINT));
   
@@ -140,8 +147,9 @@ function createList($config, $site, $articleList, $tagName) {
     $list[$page][] = $article->toMap();
   }
 
+  $maxPageIndex = count($list) - 1;
   foreach($list as $index => $articleList) {
-    saveList($config, $site, $articleList, $tagName, $index);
+    saveList($config, $site, $articleList, $tagName, $index, $maxPageIndex);
   }
 }
 
@@ -163,3 +171,11 @@ foreach($tagSlangList as $tagName) {
 saveSite($config, $site);
 saveTags($config, $site, $tagSlangList, $definedArticleTagList);
 saveAllArticle($config, $site, $definedArticleTagList);
+
+
+// outputのディレクトリ削除
+// var_dump("rm -rf ../" . $config['output']);
+system("rm -rf ../" . $config['output']);
+// mkdirs("../" . $config['output']);
+// var_dump("mv ../tmp ../" . $config['output']);
+system("mv ../tmp ../" . $config['output']);
