@@ -1,0 +1,24 @@
+{
+    "site": {
+        "site_title": "\u306a\u304a\u3057\u3080\u8ad6",
+        "site_description": "its my life",
+        "site_link": "https:\/\/naosim.github.io\/static-contents-manager",
+        "site_author": "\u306a\u304a\u3057\u3080",
+        "num_article_by_page": 2
+    },
+    "contents": {
+        "title": "\u3055\u3093\u3077\u308b",
+        "date": "2018-07-26 12:00:00",
+        "tag_slang_list": [
+            {
+                "tag_slang": "sample",
+                "tag_display_name": "\u30b5\u30f3\u30d7\u30eb"
+            },
+            {
+                "tag_slang": "hoge",
+                "tag_display_name": "hoge"
+            }
+        ],
+        "body": "\u307b\u3052\u307b\u3052"
+    }
+}

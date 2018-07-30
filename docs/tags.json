@@ -1,29 +1,26 @@
 {
-  "site": {
-    "site_title": "なおしむ論",
-    "site_description": "its my life",
-    "site_link": "",
-    "site_author": "なおしむ"
-  },
-  "tags": [
-    {
-      "name": "all",
-      "link": "list/all/all_1.json"
+    "site": {
+        "site_title": "\u306a\u304a\u3057\u3080\u8ad6",
+        "site_description": "its my life",
+        "site_link": "https:\/\/naosim.github.io\/static-contents-manager",
+        "site_author": "\u306a\u304a\u3057\u3080",
+        "num_article_by_page": 2
     },
-    {
-      "name": "sample",
-      "link": "list/sample/sample_1.json"
-    },
-    {
-      "name": "hoge",
-      "link": "list/hoge/hoge_1.json"
-    },
-    {
-      "name": "foo",
-      "link": "list/foo/foo_1.json"
-    }
-  ]
-
+    "tags": [
+        {
+            "tag_slang": "sample",
+            "tag_display_name": "\u30b5\u30f3\u30d7\u30eb",
+            "link": "https:\/\/naosim.github.io\/static-contents-manager\/list\/sample\/0.json"
+        },
+        {
+            "tag_slang": "hoge",
+            "tag_display_name": "hoge",
+            "link": "https:\/\/naosim.github.io\/static-contents-manager\/list\/hoge\/0.json"
+        },
+        {
+            "tag_slang": "foo",
+            "tag_display_name": "foo",
+            "link": "https:\/\/naosim.github.io\/static-contents-manager\/list\/foo\/0.json"
+        }
+    ]
 }
-
-
